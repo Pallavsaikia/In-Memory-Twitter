@@ -1,24 +1,37 @@
 package com.pallav.InmemoryTwitter.in_memory_db;
 
-
+import java.lang.reflect.Method;
 import java.util.*;
+import java.util.function.Function;
 
 public class InMemoryStorage<T> implements Storage<T> {
 
     private final Map<String, T> entityStorage = new HashMap<>();
     private final PriorityQueue<T> priorityQueue;
+    private final Map<String, Map<String, Set<T>>> indexes = new HashMap<>();
+    private final Map<String, Function<T, String>> indexExtractors = new HashMap<>();
 
-    // Constructor that takes a comparator to define the priority ordering
-    public InMemoryStorage(Comparator<T> comparator) {
+    public InMemoryStorage(Comparator<T> comparator, Map<String, Function<T, String>> indexExtractors) {
         this.priorityQueue = new PriorityQueue<>(comparator);
+        this.indexExtractors.putAll(indexExtractors);
+        for (String field : indexExtractors.keySet()) {
+            indexes.put(field, new HashMap<>());
+        }
     }
 
     @Override
     public void saveEntity(T entity) {
-        // Assuming entities have a method to get their ID (this could be done using reflection or interface method)
         String entityId = getEntityId(entity);
         entityStorage.put(entityId, entity);
         priorityQueue.offer(entity);
+
+        for (Map.Entry<String, Function<T, String>> entry : indexExtractors.entrySet()) {
+            String field = entry.getKey();
+            String value = entry.getValue().apply(entity);
+            indexes.get(field)
+                    .computeIfAbsent(value, k -> new HashSet<>())
+                    .add(entity);
+        }
     }
 
     @Override
@@ -35,30 +48,43 @@ public class InMemoryStorage<T> implements Storage<T> {
     public void deleteEntity(String entityId) {
         T entity = entityStorage.remove(entityId);
         if (entity != null) {
-            // Remove from the priority queue, but priority queue doesn't support direct removal
-            // A full rebuild could be done here (though inefficient)
             rebuildPriorityQueue();
+            for (Map.Entry<String, Function<T, String>> entry : indexExtractors.entrySet()) {
+                String field = entry.getKey();
+                String value = entry.getValue().apply(entity);
+                Set<T> set = indexes.get(field).get(value);
+                if (set != null) {
+                    set.remove(entity);
+                    if (set.isEmpty()) {
+                        indexes.get(field).remove(value);
+                    }
+                }
+            }
         }
     }
 
     @Override
     public T findByPriority() {
-        return priorityQueue.peek();  // Return the highest priority entity
+        return priorityQueue.peek();
     }
 
-    // Helper method to rebuild the priority queue after an entity is deleted
+    @Override
+    public Set<T> findByIndex(String fieldName, String value) {
+        return indexes.getOrDefault(fieldName, Collections.emptyMap())
+                .getOrDefault(value, Collections.emptySet());
+    }
+
     private void rebuildPriorityQueue() {
         priorityQueue.clear();
         priorityQueue.addAll(entityStorage.values());
     }
 
-    // Method to get entity ID (assuming entity has an `id` field or method to retrieve it)
     private String getEntityId(T entity) {
         try {
-            // Using reflection to get the "id" field value (assuming entity has an "id" method or field)
-            return (String) entity.getClass().getMethod("getId").invoke(entity);
+            Method getId = entity.getClass().getMethod("getId");
+            return (String) getId.invoke(entity);
         } catch (Exception e) {
-            throw new RuntimeException("Entity must have an ID method or field");
+            throw new RuntimeException("Entity must have a public getId() method returning String");
         }
     }
 }

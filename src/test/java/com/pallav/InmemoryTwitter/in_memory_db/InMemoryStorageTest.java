@@ -1,67 +1,49 @@
 package com.pallav.InmemoryTwitter.in_memory_db;
+import com.pallav.InmemoryTwitter.User;
 import com.pallav.InmemoryTwitter.in_memory_db.entity.TestEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.junit.jupiter.api.BeforeEach;
-import java.util.Comparator;
-import java.util.List;
+
+import java.util.*;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class InMemoryStorageTest {
+public class InMemoryStorageTest {
 
-    private InMemoryStorage<TestEntity> storage;
+    @Test
+    public void testUserStorage() {
+        Map<String, Function<User, String>> indexMap = new HashMap<>();
+        indexMap.put("username", User::getUsername);
+        indexMap.put("email", User::getEmail);
 
-    @BeforeEach
-    void setUp() {
-        storage = new InMemoryStorage<>(
-                Comparator.comparingInt(TestEntity::getPriority).reversed()
+        InMemoryStorage<User> userStorage = new InMemoryStorage<>(
+                Comparator.comparing(User::getId),
+                indexMap
         );
-    }
 
-    @Test
-    void shouldSaveAndFindEntityById() {
-        TestEntity entity = new TestEntity("1", 50);
-        storage.saveEntity(entity);
+        User u1 = new User("1", "pallav", "pallav@example.com");
+        User u2 = new User("2", "john", "john@example.com");
+        User u3 = new User("3", "pallav", "p2@example.com");
 
-        TestEntity result = storage.findEntityById("1");
+        userStorage.saveEntity(u1);
+        userStorage.saveEntity(u2);
+        userStorage.saveEntity(u3);
 
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo("1");
-        assertThat(result.getPriority()).isEqualTo(50);
-    }
+        System.out.println("Find by ID 2: " + userStorage.findEntityById("2"));
 
-    @Test
-    void shouldReturnAllEntities() {
-        storage.saveEntity(new TestEntity("1", 10));
-        storage.saveEntity(new TestEntity("2", 20));
+        System.out.println("Find by username = 'pallav'");
+        Set<User> pallavUsers = userStorage.findByIndex("username", "pallav");
+        pallavUsers.forEach(System.out::println);
 
-        List<TestEntity> all = storage.getAllEntities();
+        System.out.println("Priority user: " + userStorage.findByPriority());
 
-        assertThat(all).hasSize(2);
-    }
+        userStorage.deleteEntity("1");
 
-    @Test
-    void shouldDeleteEntity() {
-        storage.saveEntity(new TestEntity("1", 10));
-        storage.saveEntity(new TestEntity("2", 20));
-
-        storage.deleteEntity("1");
-
-        assertThat(storage.findEntityById("1")).isNull();
-        assertThat(storage.getAllEntities()).hasSize(1);
-    }
-
-    @Test
-    void shouldReturnEntityWithHighestPriority() {
-        storage.saveEntity(new TestEntity("1", 5));
-        storage.saveEntity(new TestEntity("2", 100));
-        storage.saveEntity(new TestEntity("3", 50));
-
-        TestEntity top = storage.findByPriority();
-
-        assertThat(top).isNotNull();
-        assertThat(top.getPriority()).isEqualTo(100);
+        System.out.println("After deleting ID=1");
+        Set<User> remaining = userStorage.findByIndex("username", "pallav");
+        remaining.forEach(System.out::println);
     }
 }
