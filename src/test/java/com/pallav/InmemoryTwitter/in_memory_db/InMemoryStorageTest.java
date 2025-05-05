@@ -1,9 +1,7 @@
 package com.pallav.InmemoryTwitter.in_memory_db;
-import com.pallav.InmemoryTwitter.User;
-import com.pallav.InmemoryTwitter.in_memory_db.entity.TestEntity;
+import com.pallav.InmemoryTwitter.core.user.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.junit.jupiter.api.BeforeEach;
 
 import java.util.*;
 import java.util.function.Function;
@@ -24,9 +22,9 @@ public class InMemoryStorageTest {
                 indexMap
         );
 
-        User u1 = new User("1", "pallav", "pallav@example.com");
-        User u2 = new User("2", "john", "john@example.com");
-        User u3 = new User("3", "pallav", "p2@example.com");
+        User u1 = new User("1", "pallav", "pallav@example.com","Adaa");
+        User u2 = new User("2", "john", "john@example.com","Adaa");
+        User u3 = new User("3", "pallav", "p2@example.com","Adaa");
 
         userStorage.saveEntity(u1);
         userStorage.saveEntity(u2);

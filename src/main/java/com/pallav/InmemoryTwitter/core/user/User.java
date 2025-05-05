@@ -1,20 +1,22 @@
-package com.pallav.InmemoryTwitter;
+package com.pallav.InmemoryTwitter.core.user;
 
 public class User {
     private String id;
     private String username;
     private String email;
+    private String password;
 
-    public User(String id, String username, String email) {
+    public User(String id, String username, String email,String password) {
         this.id = id;
         this.username = username;
         this.email = email;
+        this.password=password;
     }
 
     public String getId() { return id; }
     public String getUsername() { return username; }
     public String getEmail() { return email; }
-    public Integer getEmails() { return 1; }
+    public String getPassword() { return password; }
 
     @Override
     public String toString() {

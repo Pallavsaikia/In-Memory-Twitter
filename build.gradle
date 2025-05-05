@@ -24,7 +24,7 @@ dependencies {
 
 	// Runtime dependencies for signing and JSON serialization
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
-
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

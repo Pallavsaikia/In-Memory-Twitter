@@ -1,6 +1,7 @@
 package com.pallav.InmemoryTwitter;
 
 
+import com.pallav.InmemoryTwitter.core.user.User;
 import com.pallav.InmemoryTwitter.in_memory_db.InMemoryStorage;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,9 +26,9 @@ public class DemoTest  {
                 indexMap
         );
 
-        User u1 = new User("1", "pallav", "pallav@example.com");
-        User u2 = new User("2", "john", "john@example.com");
-        User u3 = new User("3", "abc", "p2@example.com");
+        User u1 = new User("1", "pallav", "pallav@example.com","pass");
+        User u2 = new User("2", "john", "john@example.com","pass");
+        User u3 = new User("3", "pallav", "p2@example.com","pass");
 
         userStorage.saveEntity(u1);
         userStorage.saveEntity(u2);
@@ -35,7 +36,7 @@ public class DemoTest  {
 
         Set<User> usersByEmail = userStorage.findByIndex("username", "pallav");
         for (User user : usersByEmail) {
-            System.out.println(user.getUsername());
+            System.out.println(user.getEmail());
         }
         return "Hello from Spring Boot with Java 21!";
     }
