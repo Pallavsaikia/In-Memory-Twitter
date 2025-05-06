@@ -14,16 +14,24 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 public class AuthenticationController {
 
+
+
+    private final AuthenticationService authenticationService;
+
     @Autowired
-    private AuthenticationService authenticationService;
+    public AuthenticationController(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
+    }
 
-
+    // Register user
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<User>> authenticate(@Valid @RequestBody UserRegisterDTO user) {
-//        User savedUser = authenticationService.registerUser(user);
+    public ResponseEntity<ApiResponse<User>> registerUser(@Valid @RequestBody UserRegisterDTO user) {
+        // Call the service to register the user
+        User savedUser = authenticationService.register(user.getUsername(),user.getEmail(),user.getPassword());
 
-        // Success Response with default message and code
-        SuccessResponse<User> successResponse = new SuccessResponse<>(null, null, null);
+        // Success Response with the saved user details
+        SuccessResponse<User> successResponse = new SuccessResponse<>(savedUser, "User registered successfully.", null);
+
         return successResponse.toResponseEntity(HttpStatus.CREATED);
     }
-}
+};
