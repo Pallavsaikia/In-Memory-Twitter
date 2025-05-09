@@ -3,6 +3,8 @@ package com.pallav.InmemoryTwitter.middleware;
 import com.pallav.InmemoryTwitter.common.responses.ApiResponse;
 import com.pallav.InmemoryTwitter.common.responses.ErrorResponse;
 import com.pallav.InmemoryTwitter.config.AppCode;
+import com.pallav.InmemoryTwitter.exceptions.AuthenticationException;
+import com.pallav.InmemoryTwitter.exceptions.ForbiddenException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -54,5 +56,18 @@ public class GlobalExceptionHandler {
         ex.printStackTrace(); // For debugging/logging
         ErrorResponse errorResponse = new ErrorResponse("Something went wrong", AppCode.INTERNAL_ERROR);
         return errorResponse.toResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ApiResponse<Object>> handleAuthenticationException(AuthenticationException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), AppCode.UNAUTHORIZED);
+        return errorResponse.toResponseEntity(HttpStatus.UNAUTHORIZED);
+    }
+
+    // Handle ForbiddenException (403 Forbidden)
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ApiResponse<Object>> handleForbiddenException(ForbiddenException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), AppCode.FORBIDDEN);
+        return errorResponse.toResponseEntity(HttpStatus.FORBIDDEN);
     }
 }

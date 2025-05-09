@@ -5,10 +5,12 @@ package com.pallav.InmemoryTwitter.core.authentication;
 
 import com.pallav.InmemoryTwitter.core.user.User;
 import com.pallav.InmemoryTwitter.core.user.repo.UserRepository;
+import com.pallav.InmemoryTwitter.exceptions.AuthenticationException;
 import com.pallav.InmemoryTwitter.in_memory_db.InMemoryStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Set;
 
 import java.util.UUID;
@@ -41,5 +43,19 @@ public class AuthenticationService {
         userRepository.save(user);
 
         return user;
+    }
+
+    public User login(String username, String password) {
+
+        Set<User> userSet= userRepository.findByUsername(username);
+        if(userSet.isEmpty()){
+            throw new AuthenticationException("Wrong Credentials");
+        }
+        for (User user : userSet) {
+            if(!Objects.equals(password, user.password())){
+                throw new AuthenticationException("Wrong Credentials");
+            }
+        }
+        return  userSet.iterator().next();
     }
 }

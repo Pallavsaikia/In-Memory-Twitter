@@ -17,8 +17,8 @@ public class InMemoryStorageTest {
     public void testUserStorage() {
         // Create index map with username and email
         Map<String, Function<User, String>> indexMap = new HashMap<>();
-        indexMap.put("username", User::getUsername);
-        indexMap.put("email", User::getEmail);
+        indexMap.put("username", User::username);
+        indexMap.put("email", User::email);
 
         // Initialize InMemoryStorage with User class and indexes
         InMemoryStorage<User> userStorage = new InMemoryStorage<>(User.class);
@@ -38,7 +38,7 @@ public class InMemoryStorageTest {
 
         User foundUser = userStorage.findEntityById("2");
         assertThat(foundUser).isNotNull();
-        assertThat(foundUser.getId()).isEqualTo("2");
+        assertThat(foundUser.id()).isEqualTo("2");
 //
 //        // Test finding users by username (using the index)
         Set<User> pallavUsers = userStorage.findByIndex("username", "pallav");
@@ -47,7 +47,7 @@ public class InMemoryStorageTest {
 
         // Test finding the user with the highest priority (based on comparator)
         User priorityUser = userStorage.findByPriority();
-        assertThat(priorityUser.getId()).isEqualTo("2");  // User with ID=2 should be first based on comparator (sorted by username)
+        assertThat(priorityUser.id()).isEqualTo("2");  // User with ID=2 should be first based on comparator (sorted by username)
 
         // Test deleting a user by ID
         userStorage.deleteEntity("1");
@@ -58,6 +58,6 @@ public class InMemoryStorageTest {
 
         // Test finding the user with the highest priority after deletion
         User priorityUserAfterDelete = userStorage.findByPriority();
-        assertThat(priorityUserAfterDelete.getId()).isEqualTo("2");  // User with ID=2 should now be first
+        assertThat(priorityUserAfterDelete.id()).isEqualTo("2");  // User with ID=2 should now be first
     }
 }

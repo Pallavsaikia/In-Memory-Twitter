@@ -154,7 +154,7 @@ public class InMemoryStorage<T> implements Storage<T> {
 
     @Override
     public Set<T> findByIndex(String fieldName, String value) {
-        System.out.println(indexes);
+//        System.out.println(indexes);
         return indexes.getOrDefault(fieldName, Collections.emptyMap())
                 .getOrDefault(value, Collections.emptySet());
     }

@@ -7,44 +7,19 @@ import com.pallav.InmemoryTwitter.in_memory_db.decorators.PriorityComparator;
 
 import java.util.Comparator;
 
-public class User {
-
-    private final String id;
-    private final String username;
-    private final String email;
-    private final String password;
-
-    public User(String id, String username, String email, String password) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-    }
-
-    @PrimaryKey("id")
-    public String getId() {
-        return id;
-    }
-
-    @Index("username")
-    @Unique("username")
-    public String getUsername() {
-        return username;
-    }
-
-    @Index("email")
-    @Unique("email")
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
+public record User(@PrimaryKey("id")
+                   String id,
+                   @Index("username")
+                   @Unique("username")
+                   String username,
+                   @Index("email")
+                   @Unique("email")
+                   String email,
+                   String password) {
 
     @PriorityComparator
     public static Comparator<User> sortByUsername() {
-        return Comparator.comparing(User::getUsername);
+        return Comparator.comparing(User::username);
     }
 
     @Override
