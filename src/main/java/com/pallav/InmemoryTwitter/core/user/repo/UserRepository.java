@@ -1,6 +1,6 @@
 package com.pallav.InmemoryTwitter.core.user.repo;
 
-import com.pallav.InmemoryTwitter.core.user.User;
+import com.pallav.InmemoryTwitter.core.user.models.User;
 import com.pallav.InmemoryTwitter.in_memory_db.InMemoryStorage;
 import org.springframework.stereotype.Repository;
 
@@ -17,8 +17,8 @@ public class UserRepository {
     }
 
     // Save a user to the in-memory storage
-    public void save(User user) {
-        userStorage.saveEntity(user);
+    public User save(User user) {
+        return userStorage.saveEntity(user);
     }
 
     // Find a user by their ID

@@ -81,7 +81,7 @@ public class InMemoryStorage<T> implements Storage<T> {
     }
 
     @Override
-    public void saveEntity(T entity) {
+    public T saveEntity(T entity) {
         // Check uniqueness before saving the entity
         for (Method uniqueField : uniqueFields) {
             String value = extractValueFromEntity(uniqueField, entity);
@@ -108,6 +108,7 @@ public class InMemoryStorage<T> implements Storage<T> {
                     .computeIfAbsent(value, k -> new HashSet<>())
                     .add(entity);  // Add the entity to the index
         }
+        return  entity;
     }
 
     private String extractValueFromEntity(Method field, T entity) {

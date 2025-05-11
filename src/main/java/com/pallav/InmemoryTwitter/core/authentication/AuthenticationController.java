@@ -2,7 +2,7 @@ package com.pallav.InmemoryTwitter.core.authentication;
 
 import com.pallav.InmemoryTwitter.common.responses.ApiResponse;
 import com.pallav.InmemoryTwitter.common.responses.SuccessResponse;
-import com.pallav.InmemoryTwitter.core.user.User;
+import com.pallav.InmemoryTwitter.core.user.models.User;
 import com.pallav.InmemoryTwitter.core.user.dto.UserLoginDTO;
 import com.pallav.InmemoryTwitter.core.user.dto.UserLoginResponseDTO;
 import com.pallav.InmemoryTwitter.core.user.dto.UserRegisterDTO;
@@ -56,7 +56,7 @@ public class AuthenticationController {
                 privilege
 
         );
-        SuccessResponse<UserLoginResponseDTO> successResponse = new SuccessResponse<>(userResponseDTO, "User registered successfully.", null);
-        return successResponse.toResponseEntity(HttpStatus.CREATED);
+        SuccessResponse<UserLoginResponseDTO> successResponse = new SuccessResponse<>(userResponseDTO, "User Logged in successfully.", null);
+        return successResponse.toResponseEntity(HttpStatus.OK);
     }
 };

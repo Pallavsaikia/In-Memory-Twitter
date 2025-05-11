@@ -3,10 +3,15 @@ package com.pallav.InmemoryTwitter.core.authentication;
 
 
 
-import com.pallav.InmemoryTwitter.core.user.User;
+import com.pallav.InmemoryTwitter.config.base_roles.RoleBasic;
+import com.pallav.InmemoryTwitter.core.authentication.models.Roles;
+import com.pallav.InmemoryTwitter.core.authentication.models.UserRoles;
+import com.pallav.InmemoryTwitter.core.authentication.repo.PrivilegesRepository;
+import com.pallav.InmemoryTwitter.core.authentication.repo.RolesRepository;
+import com.pallav.InmemoryTwitter.core.authentication.repo.UserRolesRepository;
+import com.pallav.InmemoryTwitter.core.user.models.User;
 import com.pallav.InmemoryTwitter.core.user.repo.UserRepository;
 import com.pallav.InmemoryTwitter.exceptions.AuthenticationException;
-import com.pallav.InmemoryTwitter.in_memory_db.InMemoryStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,10 +24,15 @@ import java.util.UUID;
 public class AuthenticationService {
 
     private final UserRepository userRepository;
-
+    private final UserRoleService userRoleService;
+    private final RolesService rolesService;
     @Autowired
-    public AuthenticationService(UserRepository userRepository) {
+    public AuthenticationService(UserRepository userRepository,
+            UserRoleService userRoleService,
+            RolesService rolesService) {
         this.userRepository = userRepository;
+        this.userRoleService=userRoleService;
+        this.rolesService=rolesService;
     }
 
     public User register(String username, String email, String password) {
@@ -41,7 +51,11 @@ public class AuthenticationService {
 
         // Save the user
         userRepository.save(user);
-
+        Set<Roles> roles=rolesService.findByName(RoleBasic.INSTANCE.getName());
+        Roles role=roles.toArray(new Roles[0])[0];
+        System.out.println(role);
+        UserRoles userRoles=userRoleService.assignRoleToUser(user,role);
+        System.out.println(userRoles);
         return user;
     }
 

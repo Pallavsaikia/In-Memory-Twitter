@@ -1,4 +1,4 @@
-package com.pallav.InmemoryTwitter.core.user;
+package com.pallav.InmemoryTwitter.core.user.models;
 
 import com.pallav.InmemoryTwitter.in_memory_db.decorators.Index;
 import com.pallav.InmemoryTwitter.in_memory_db.decorators.PrimaryKey;

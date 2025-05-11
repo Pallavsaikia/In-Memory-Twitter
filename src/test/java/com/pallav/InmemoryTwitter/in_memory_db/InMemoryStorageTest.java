@@ -1,6 +1,6 @@
 package com.pallav.InmemoryTwitter.in_memory_db;
 
-import com.pallav.InmemoryTwitter.core.user.User;
+import com.pallav.InmemoryTwitter.core.user.models.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 

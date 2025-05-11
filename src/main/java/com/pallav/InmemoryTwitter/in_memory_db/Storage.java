@@ -5,7 +5,7 @@ import java.util.Set;
 
 
 public interface Storage<T> {
-    void saveEntity(T entity);
+    T saveEntity(T entity);
     T findEntityById(String entityId);
     List<T> getAllEntities();
     void deleteEntity(String entityId);
